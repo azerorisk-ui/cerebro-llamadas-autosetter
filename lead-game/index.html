@@ -1,0 +1,529 @@
+<!--
+==================================================================
+  DM RUSH · El juego del inbound · by AUTOSETTER™
+  Lead magnet jugable para infoproductores · branding LAB (#FE2E00)
+
+  Un solo archivo. Sin dependencias. Mobile-first.
+  Todo lo personalizable vive en el objeto CONFIG de abajo:
+  cambia textos, precios, mensajes y el CTA final sin tocar
+  la lógica del juego.
+==================================================================
+-->
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#050505">
+  <title>DM RUSH · AUTOSETTER™</title>
+  <meta name="description" content="Tienes 1 día para gestionar tu bandeja de Instagram. Cada lead que se enfría es dinero que pierdes. ¿Cuánto eres capaz de cerrar?">
+  <meta property="og:title" content="DM RUSH · ¿Cuánto dinero hay muriendo en tu bandeja?">
+  <meta property="og:description" content="60 segundos. Tu bandeja de Instagram. Leads reales enfriándose. Juega y descubre tu eficiencia de setter.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Geist:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='8' fill='%23FE2E00'/%3E%3Ccircle cx='30' cy='35' r='3' fill='%23FE2E00' opacity='.6'/%3E%3Ccircle cx='70' cy='35' r='3' fill='%23FE2E00' opacity='.6'/%3E%3Ccircle cx='30' cy='65' r='3' fill='%23FE2E00' opacity='.6'/%3E%3Ccircle cx='70' cy='65' r='3' fill='%23FE2E00' opacity='.6'/%3E%3C/svg%3E">
+
+  <style>
+    :root {
+      --bg: #050505;
+      --fg: #F5F2EC;
+      --soft: #C9C5BD;
+      --dim: #6E6A62;
+      --accent: #FE2E00;
+      --accent-soft: rgba(254,46,0,.10);
+      --green: #2EE06B;
+      --green-soft: rgba(46,224,107,.10);
+      --line: rgba(255,255,255,.08);
+      --line-strong: rgba(255,255,255,.16);
+      --card: #101010;
+      --easing: cubic-bezier(.16, 1, .3, 1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; overscroll-behavior: none; }
+    body {
+      background: var(--bg); color: var(--fg);
+      font-family: 'Geist', system-ui, sans-serif;
+      line-height: 1.45; letter-spacing: -0.01em;
+      overflow: hidden; -webkit-font-smoothing: antialiased;
+      user-select: none; -webkit-user-select: none;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: 0; }
+    .script { font-family: 'Caveat', cursive; font-weight: 600; }
+    .accent { color: var(--accent); }
+    .dim { color: var(--dim); }
+
+    .screen {
+      position: fixed; inset: 0;
+      display: none; flex-direction: column;
+      max-width: 480px; margin: 0 auto;
+      padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
+    }
+    .screen.active { display: flex; }
+
+    /* ============ INTRO ============ */
+    #intro { justify-content: center; gap: 22px; text-align: center; }
+    #intro .brand {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--dim);
+    }
+    #intro h1 {
+      font-size: clamp(40px, 12vw, 64px); font-weight: 900;
+      letter-spacing: -0.04em; line-height: .95;
+    }
+    #intro h1 .accent { display: block; }
+    #intro .pitch { color: var(--soft); font-size: 16px; max-width: 320px; margin: 0 auto; }
+    #intro .rules {
+      display: grid; gap: 10px; max-width: 320px; margin: 0 auto;
+      text-align: left; font-size: 14px; color: var(--soft);
+    }
+    #intro .rules div { display: flex; gap: 10px; align-items: flex-start; }
+    #intro .rules .ico { flex: 0 0 auto; }
+
+    .btn {
+      font-family: 'Geist', sans-serif; font-weight: 700; font-size: 17px;
+      background: var(--accent); color: #fff; border: none; border-radius: 14px;
+      padding: 17px 28px; cursor: pointer;
+      transition: transform .15s var(--easing), opacity .2s;
+      letter-spacing: -0.01em;
+    }
+    .btn:active { transform: scale(.96); }
+    .btn.ghost {
+      background: transparent; color: var(--fg);
+      border: 1px solid var(--line-strong); font-weight: 500;
+    }
+
+    /* ============ GAME / HUD ============ */
+    #game { gap: 12px; }
+    .hud {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 14px; border: 1px solid var(--line); border-radius: 14px;
+      background: rgba(255,255,255,.02);
+    }
+    .hud .stat { text-align: center; }
+    .hud .label {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--dim);
+    }
+    .hud .value { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; }
+    .hud .value.win { color: var(--green); }
+    .hud .value.lose { color: var(--accent); }
+
+    .dayline { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; }
+    .dayline .fill { height: 100%; width: 0%; background: var(--accent); transition: width .3s linear; }
+
+    #inbox {
+      flex: 1; display: flex; flex-direction: column; gap: 12px;
+      overflow: hidden; padding-top: 4px;
+    }
+
+    .dm {
+      background: var(--card); border: 1px solid var(--line-strong);
+      border-radius: 18px; padding: 14px;
+      display: grid; gap: 10px;
+      animation: dmIn .35s var(--easing);
+      position: relative; overflow: hidden;
+    }
+    @keyframes dmIn {
+      from { opacity: 0; transform: translateY(-14px) scale(.97); }
+      to   { opacity: 1; transform: none; }
+    }
+    .dm.out-good { animation: outGood .3s var(--easing) forwards; }
+    .dm.out-bad  { animation: outBad .35s var(--easing) forwards; }
+    @keyframes outGood { to { opacity: 0; transform: translateX(40px) scale(.95); } }
+    @keyframes outBad  { to { opacity: 0; transform: translateY(10px) scale(.92); filter: grayscale(1); } }
+
+    .dm .head { display: flex; align-items: center; gap: 10px; }
+    .dm .avatar {
+      width: 34px; height: 34px; border-radius: 50%; flex: 0 0 auto;
+      display: grid; place-items: center; font-size: 16px;
+      background: var(--accent-soft); border: 1px solid var(--line);
+    }
+    .dm .who { font-weight: 600; font-size: 14px; }
+    .dm .handle { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--dim); }
+    .dm .msg { font-size: 15px; color: var(--fg); }
+    .dm .actions { display: flex; gap: 8px; }
+    .dm .actions button {
+      flex: 1; font-family: 'Geist', sans-serif; font-weight: 600; font-size: 14px;
+      padding: 11px 0; border-radius: 11px; border: none; cursor: pointer;
+      transition: transform .1s;
+    }
+    .dm .actions button:active { transform: scale(.95); }
+    .dm .actions .reply { background: var(--fg); color: var(--bg); }
+    .dm .actions .ignore { background: transparent; color: var(--soft); border: 1px solid var(--line-strong); }
+
+    .dm .life { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--accent); width: 100%; }
+
+    .float {
+      position: fixed; left: 50%; transform: translateX(-50%);
+      font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 22px;
+      pointer-events: none; z-index: 50;
+      animation: floatUp 1s var(--easing) forwards;
+    }
+    .float.win { color: var(--green); }
+    .float.lose { color: var(--accent); }
+    @keyframes floatUp {
+      from { opacity: 1; transform: translateX(-50%) translateY(0); }
+      to   { opacity: 0; transform: translateX(-50%) translateY(-60px); }
+    }
+
+    .toast {
+      position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+      background: var(--card); border: 1px solid var(--line-strong);
+      font-size: 13px; color: var(--soft);
+      padding: 9px 16px; border-radius: 99px; z-index: 60;
+      animation: toastIn 2.2s var(--easing) forwards; white-space: nowrap;
+    }
+    @keyframes toastIn {
+      0% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+      12%, 80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+    }
+
+    /* ============ RESULTS ============ */
+    #results { justify-content: center; gap: 18px; text-align: center; overflow-y: auto; }
+    #results .over {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--dim);
+    }
+    #results .rank { font-size: clamp(30px, 9vw, 44px); font-weight: 900; letter-spacing: -0.03em; line-height: 1.05; }
+    .scoreboard {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      max-width: 360px; width: 100%; margin: 0 auto;
+    }
+    .scorecard {
+      border: 1px solid var(--line); border-radius: 16px; padding: 16px 10px;
+      background: rgba(255,255,255,.02);
+    }
+    .scorecard.full { grid-column: 1 / -1; }
+    .scorecard .num { font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; }
+    .scorecard .num.win { color: var(--green); }
+    .scorecard .num.lose { color: var(--accent); }
+    .scorecard .cap {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin-top: 4px;
+    }
+    #results .punch { color: var(--soft); font-size: 15px; max-width: 330px; margin: 0 auto; }
+    #results .punch b { color: var(--fg); }
+    #results .ctaWrap { display: grid; gap: 10px; max-width: 360px; width: 100%; margin: 0 auto; }
+    #results .legal { font-size: 11px; color: var(--dim); }
+  </style>
+</head>
+<body>
+
+  <!-- ============ PANTALLA 1 · INTRO ============ -->
+  <section id="intro" class="screen active">
+    <div class="brand">● AUTOSETTER™ LAB</div>
+    <h1>DM<span class="accent">RUSH</span></h1>
+    <p class="pitch">Hoy el setter eres tú. Una bandeja de Instagram real. Leads enfriándose en tiempo real.</p>
+    <div class="rules">
+      <div><span class="ico">💬</span><span><b>Responde</b> a los leads antes de que se enfríen. Cada uno vale dinero.</span></div>
+      <div><span class="ico">🗑️</span><span><b>Ignora</b> el spam y los vendehumos. Responderles te cuesta caro.</span></div>
+      <div><span class="ico">⏱️</span><span>El día dura 60 segundos. A partir de las 14:00… suerte.</span></div>
+    </div>
+    <button class="btn" id="btnStart">Abrir la bandeja →</button>
+    <div class="script accent" style="font-size:20px">¿cuánto dinero se muere hoy en tus DMs?</div>
+  </section>
+
+  <!-- ============ PANTALLA 2 · JUEGO ============ -->
+  <section id="game" class="screen">
+    <div class="hud">
+      <div class="stat"><div class="label">Hora</div><div class="value" id="hudClock">09:00</div></div>
+      <div class="stat"><div class="label">Cerrado</div><div class="value win" id="hudWon">0€</div></div>
+      <div class="stat"><div class="label">Perdido</div><div class="value lose" id="hudLost">0€</div></div>
+    </div>
+    <div class="dayline"><div class="fill" id="dayFill"></div></div>
+    <div id="inbox"></div>
+  </section>
+
+  <!-- ============ PANTALLA 3 · RESULTADOS ============ -->
+  <section id="results" class="screen">
+    <div class="over">// fin de la jornada</div>
+    <div class="rank" id="resRank">SETTER BECARIO</div>
+    <div class="scoreboard">
+      <div class="scorecard"><div class="num win" id="resWon">0€</div><div class="cap">cerrado hoy</div></div>
+      <div class="scorecard"><div class="num lose" id="resLost">0€</div><div class="cap">muerto en la bandeja</div></div>
+      <div class="scorecard full"><div class="num" id="resEff">0%</div><div class="cap">eficiencia de setter</div></div>
+    </div>
+    <p class="punch" id="resPunch"></p>
+    <div class="ctaWrap">
+      <button class="btn" id="btnCTA"></button>
+      <button class="btn ghost" id="btnShare">Compartir mi resultado 📲</button>
+      <button class="btn ghost" id="btnRetry">Volver a intentarlo</button>
+    </div>
+    <div class="legal mono">DM RUSH · by AUTOSETTER™</div>
+  </section>
+
+  <script>
+    /* ==============================================================
+       CONFIG · todo lo que un creador personalizaría de su juego.
+       Cambia esto y tienes un lead magnet distinto para otro nicho
+       u otro CTA, sin tocar una línea de la lógica.
+       ============================================================== */
+    const CONFIG = {
+      duracionSegundos: 60,
+      horaInicio: 9,           // el reloj del HUD va de 09:00
+      horaFin: 23,             // a 23:00 durante la partida
+
+      // CTA final: texto + acción (link a ManyChat, typeform, calendly, DM…)
+      cta: {
+        texto: 'Quiero mi bandeja en automático →',
+        url: 'https://autosetter-lab.pages.dev/',
+        // Texto que acompaña al share nativo (genera el loop viral)
+        share: (won, lost, eff) =>
+          `Acabo de jugar a DM RUSH 📱🔥\n` +
+          `Cerré ${won}€ pero dejé morir ${lost}€ en la bandeja (eficiencia ${eff}%).\n` +
+          `¿Cuánto dinero se muere en la tuya? Juega aquí:`,
+      },
+
+      // Economía del juego
+      valorLeadCaliente: 300,
+      valorCurioso: 75,
+      castigoSpam: 100,        // responder a un vendehumos cuesta dinero (tu tiempo)
+
+      // Dificultad: del inicio del día al final
+      spawnInicialMs: 1900,
+      spawnFinalMs: 750,
+      vidaInicialMs: 5200,
+      vidaFinalMs: 2900,
+      maxEnBandeja: 4,
+
+      // Pools de mensajes por tipo. Personalizar esto = personalizar el nicho.
+      mensajes: {
+        caliente: [
+          { who: 'Marta G.', handle: '@marta.fit', msg: 'Vi tu historia. Quiero entrar al programa, ¿cómo es el pago?' },
+          { who: 'Dani R.', handle: '@danirueda', msg: 'Llevo semanas siguiéndote. Estoy dentro, ¿agendamos?' },
+          { who: 'Lucía M.', handle: '@luciamejia', msg: '¿Queda plaza para la mentoría de este mes? La necesito YA' },
+          { who: 'Álvaro T.', handle: '@alvarotg', msg: 'Me lo recomendó un amigo que está dentro. ¿Hablamos hoy?' },
+          { who: 'Carmen V.', handle: '@carmen.vs', msg: 'Tengo el presupuesto listo. Solo dime el siguiente paso 🙏' },
+          { who: 'Pablo N.', handle: '@pablonav', msg: 'Acabo de ver el caso de éxito. Quiero exactamente eso. ¿Call?' },
+        ],
+        curioso: [
+          { who: 'Jorge L.', handle: '@jorgelp', msg: '¿Precio?' },
+          { who: 'Andrea S.', handle: '@andre_sz', msg: 'Info 🙌' },
+          { who: 'Raúl C.', handle: '@raulcm', msg: '¿Esto sirve si estoy empezando de cero?' },
+          { who: 'Sofía B.', handle: '@sofiabr', msg: '¿En qué se diferencia de otros programas?' },
+          { who: 'Nico F.', handle: '@nicofdz', msg: 'Me interesa pero ahora no puedo. ¿Me guardas info?' },
+          { who: 'Elena P.', handle: '@elenapr', msg: '¿Cuánto dura? ¿Y si no tengo tiempo?' },
+        ],
+        spam: [
+          { who: 'GrowthGuru', handle: '@growth.guru.10x', msg: 'Bro, te consigo 10k seguidores este mes 🚀 ¿Te interesa?' },
+          { who: 'Agencia Élite', handle: '@elite.ads.agency', msg: 'Hola! Trabajamos con cuentas como la tuya. ¿Call de 15 min?' },
+          { who: 'CryptoKing', handle: '@cryptoking_es', msg: 'Oportunidad única 💎 invierte hoy y duplica en 7 días' },
+          { who: 'Hater29', handle: '@verdades.info', msg: 'Otro vendehumos más jajaja todos sois iguales' },
+          { who: 'Sorteos VIP', handle: '@sorteos.vip.es', msg: '🎉 HAS GANADO un iPhone, confirma tus datos aquí' },
+          { who: 'LinkBuilder', handle: '@seo.master.pro', msg: 'Te vendo backlinks DA90 baratos, mira mi web' },
+        ],
+      },
+
+      // Rangos según eficiencia (%)
+      rangos: [
+        { min: 85, titulo: 'CLOSER IMPARABLE', punch: 'Eres top 1%… durante <b>60 segundos</b>. Tu bandeja real no descansa, no acelera por niveles y no tiene pantalla de fin de partida.' },
+        { min: 65, titulo: 'SETTER PRO', punch: 'Nada mal. Pero esto era <b>un solo día con pocos leads</b>. Con tu volumen real, este porcentaje son miles de euros muriendo cada semana.' },
+        { min: 40, titulo: 'SETTER EN PRÁCTICAS', punch: 'Te pasó lo que le pasa a todo el mundo: <b>a partir de las 14:00 la bandeja gana</b>. Y tu bandeja real juega esta partida 24/7.' },
+        { min: 0, titulo: 'LA BANDEJA TE COMIÓ', punch: 'Tranqui: <b>no es falta de skill, es falta de sistema</b>. Ningún humano gana a una bandeja que no duerme. Por eso existe otra forma de jugar.' },
+      ],
+    };
+
+    /* ==============================================================
+       LÓGICA DEL JUEGO (no hace falta tocar nada de aquí abajo)
+       ============================================================== */
+    const $ = (id) => document.getElementById(id);
+    const screens = { intro: $('intro'), game: $('game'), results: $('results') };
+    const state = { won: 0, lost: 0, hits: 0, misses: 0, t0: 0, spawnTimer: null, tickTimer: null, cards: new Set(), over: false };
+
+    function show(name) {
+      Object.values(screens).forEach(s => s.classList.remove('active'));
+      screens[name].classList.add('active');
+    }
+
+    const fmt = (n) => n.toLocaleString('es-ES') + '€';
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const progress = () => Math.min(1, (Date.now() - state.t0) / (CONFIG.duracionSegundos * 1000));
+
+    function floatText(text, win, y) {
+      const el = document.createElement('div');
+      el.className = 'float ' + (win ? 'win' : 'lose');
+      el.textContent = text;
+      el.style.top = (y || window.innerHeight * .45) + 'px';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1000);
+    }
+
+    function toast(text) {
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.textContent = text;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 2300);
+    }
+
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    function pickType() {
+      const r = Math.random();
+      if (r < .30) return 'caliente';
+      if (r < .68) return 'curioso';
+      return 'spam';
+    }
+
+    function avatarFor(type) {
+      return type === 'caliente' ? '🔥' : type === 'curioso' ? '🤔' : '🤖';
+    }
+
+    function spawnDM() {
+      if (state.over) return;
+      const inbox = $('inbox');
+
+      // Bandeja llena: el DM más antiguo se pierde sin que puedas hacer nada.
+      if (state.cards.size >= CONFIG.maxEnBandeja) {
+        const oldest = inbox.firstElementChild;
+        if (oldest) expireDM(oldest, true);
+      }
+
+      const type = pickType();
+      const data = pick(CONFIG.mensajes[type]);
+      const life = lerp(CONFIG.vidaInicialMs, CONFIG.vidaFinalMs, progress());
+
+      const card = document.createElement('div');
+      card.className = 'dm';
+      card.dataset.type = type;
+      card.innerHTML = `
+        <div class="head">
+          <div class="avatar">${avatarFor(type)}</div>
+          <div><div class="who">${data.who}</div><div class="handle">${data.handle}</div></div>
+        </div>
+        <div class="msg">${data.msg}</div>
+        <div class="actions">
+          <button class="reply">💬 Responder</button>
+          <button class="ignore">Ignorar</button>
+        </div>
+        <div class="life"></div>`;
+
+      const bar = card.querySelector('.life');
+      bar.style.transition = `width ${life}ms linear`;
+      requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.width = '0%'; }));
+
+      card.querySelector('.reply').addEventListener('click', () => actOn(card, 'reply'));
+      card.querySelector('.ignore').addEventListener('click', () => actOn(card, 'ignore'));
+      card._expireTimer = setTimeout(() => expireDM(card, false), life);
+
+      state.cards.add(card);
+      inbox.appendChild(card);
+      scheduleNextSpawn();
+    }
+
+    function scheduleNextSpawn() {
+      if (state.over) return;
+      clearTimeout(state.spawnTimer);
+      const wait = lerp(CONFIG.spawnInicialMs, CONFIG.spawnFinalMs, progress());
+      state.spawnTimer = setTimeout(spawnDM, wait);
+    }
+
+    function removeCard(card, good) {
+      clearTimeout(card._expireTimer);
+      state.cards.delete(card);
+      card.classList.add(good ? 'out-good' : 'out-bad');
+      setTimeout(() => card.remove(), 350);
+    }
+
+    function actOn(card, action) {
+      if (state.over || !state.cards.has(card)) return;
+      const type = card.dataset.type;
+      const rect = card.getBoundingClientRect();
+
+      if (action === 'reply') {
+        if (type === 'caliente') { gain(CONFIG.valorLeadCaliente, rect.top); }
+        else if (type === 'curioso') { gain(CONFIG.valorCurioso, rect.top); }
+        else { lose(CONFIG.castigoSpam, rect.top); toast('Le respondiste a un vendehumos. Tu tiempo vale dinero.'); }
+        removeCard(card, type !== 'spam');
+      } else { // ignore
+        if (type === 'spam') { state.hits++; floatText('limpio ✓', true, rect.top); }
+        else {
+          const valor = type === 'caliente' ? CONFIG.valorLeadCaliente : CONFIG.valorCurioso;
+          lose(valor, rect.top);
+          toast('Era un lead de verdad… se fue con tu competencia.');
+        }
+        removeCard(card, type === 'spam');
+      }
+    }
+
+    function expireDM(card, overflow) {
+      if (state.over || !state.cards.has(card)) return;
+      const type = card.dataset.type;
+      const rect = card.getBoundingClientRect();
+      if (type !== 'spam') {
+        const valor = type === 'caliente' ? CONFIG.valorLeadCaliente : CONFIG.valorCurioso;
+        lose(valor, rect.top);
+        if (overflow) toast('Bandeja desbordada: un lead murió sin que lo vieras.');
+      }
+      removeCard(card, false);
+    }
+
+    function gain(v, y) { state.won += v; state.hits++; floatText('+' + fmt(v), true, y); render(); }
+    function lose(v, y) { state.lost += v; state.misses++; floatText('-' + fmt(v), false, y); render(); }
+
+    function render() {
+      $('hudWon').textContent = fmt(state.won);
+      $('hudLost').textContent = fmt(state.lost);
+    }
+
+    function tick() {
+      const p = progress();
+      $('dayFill').style.width = (p * 100) + '%';
+      const hora = lerp(CONFIG.horaInicio, CONFIG.horaFin, p);
+      const h = Math.floor(hora), m = Math.floor((hora - h) * 60);
+      $('hudClock').textContent = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+      if (p >= 1) endGame();
+    }
+
+    function startGame() {
+      Object.assign(state, { won: 0, lost: 0, hits: 0, misses: 0, t0: Date.now(), over: false });
+      state.cards.forEach(c => c.remove());
+      state.cards.clear();
+      $('inbox').innerHTML = '';
+      render();
+      show('game');
+      spawnDM();
+      state.tickTimer = setInterval(tick, 250);
+    }
+
+    function endGame() {
+      state.over = true;
+      clearTimeout(state.spawnTimer);
+      clearInterval(state.tickTimer);
+      state.cards.forEach(c => clearTimeout(c._expireTimer));
+
+      const total = state.won + state.lost;
+      const eff = total === 0 ? 0 : Math.round((state.won / total) * 100);
+      const rango = CONFIG.rangos.find(r => eff >= r.min);
+
+      $('resWon').textContent = fmt(state.won);
+      $('resLost').textContent = fmt(state.lost);
+      $('resEff').textContent = eff + '%';
+      $('resRank').textContent = rango.titulo;
+      $('resPunch').innerHTML = rango.punch;
+      $('btnCTA').textContent = CONFIG.cta.texto;
+      show('results');
+    }
+
+    $('btnStart').addEventListener('click', startGame);
+    $('btnRetry').addEventListener('click', startGame);
+    $('btnCTA').addEventListener('click', () => window.open(CONFIG.cta.url, '_blank'));
+    $('btnShare').addEventListener('click', async () => {
+      const total = state.won + state.lost;
+      const eff = total === 0 ? 0 : Math.round((state.won / total) * 100);
+      const text = CONFIG.cta.share(state.won.toLocaleString('es-ES'), state.lost.toLocaleString('es-ES'), eff);
+      const url = location.href;
+      if (navigator.share) {
+        try { await navigator.share({ title: 'DM RUSH', text, url }); } catch (e) { /* usuario canceló */ }
+      } else {
+        await navigator.clipboard.writeText(text + ' ' + url);
+        toast('Copiado. Pégalo en tus historias 📲');
+      }
+    });
+  </script>
+</body>
+</html>
